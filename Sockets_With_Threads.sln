@@ -7,9 +7,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{DF7B7210-66A3-40EC-B5A1-0721616EDC7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetClient", "NetClient\NetClient.csproj", "{FC9D0730-10F8-464F-8765-663049C94D2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetClient", "NetClient\NetClient.csproj", "{FC9D0730-10F8-464F-8765-663049C94D2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncNetClient", "AsyncNetClient\AsyncNetClient.csproj", "{83AA2041-F339-42B2-AF89-16AAC648E98B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncNetClient", "AsyncNetClient\AsyncNetClient.csproj", "{83AA2041-F339-42B2-AF89-16AAC648E98B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

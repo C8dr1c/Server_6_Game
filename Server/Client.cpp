@@ -98,12 +98,17 @@ void Client::end_thread()
 	ThreadedSocket::end_thread();
 }
 
-void Client::AddPlayedCard(int turn, Card card) const {
-	playedCards[turn] = card;
+int Client::getID() const 
+{
+	return id;
 }
 
-Card Client::getPlayedCard(int turn) const {
-	return playedCards[turn];
+void Client::SetPlayedCard(Card* card) {
+	playedCard = card;
+}
+
+Card* Client::getPlayedCard() const {
+	return playedCard;
 }
 
 void Client::execute_thread()

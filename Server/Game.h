@@ -41,12 +41,12 @@ class Game : public ThreadedSocket
 	GameState gameState;
 	TurnState turnState;
 
-	vector<shared_ptr<Card>> game_cards;
+	vector<Card*> game_cards;
 
-	vector<shared_ptr<Card>> game_cards_line_1;
-	vector<shared_ptr<Card>> game_cards_line_2;
-	vector<shared_ptr<Card>> game_cards_line_3;
-	vector<shared_ptr<Card>> game_cards_line_4;
+	vector<Card*> game_cards_line_1;
+	vector<Card*> game_cards_line_2;
+	vector<Card*> game_cards_line_3;
+	vector<Card*> game_cards_line_4;
 
 public:
 	Game(EndPoint*, const int, bool);

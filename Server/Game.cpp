@@ -23,6 +23,8 @@
 #include "Client.h"
 #include "Output.h"
 #include "Card.h"
+#include <algorithm>
+#include <string>
 
 Game::Game(EndPoint* connection, const int MAXDATASIZE, bool init_winsocks) : ThreadedSocket(NULL, init_winsocks, MAXDATASIZE)
 {
@@ -49,7 +51,7 @@ int currentTimeMillis() {
     FILETIME f;
     GetSystemTimeAsFileTime(&f);
     (long long)f.dwHighDateTime;
-    __int64 nano = ((__int64)f.dwHighDateTime << 32LL) + (__int64)f.dwLowDateTime;
+    int nano = ((int)f.dwHighDateTime << 32LL) + (int)f.dwLowDateTime;
     return (nano - 116444736000000000LL) / 10000;
 }
 
@@ -63,8 +65,6 @@ void Game::execute_thread()
     int gameTurn = 10;
     int currentTurn = 0;
 
-    vector<Client*> clients = connection_->getClients();
-
     while (1)
     {
         if (!is_alive)
@@ -73,12 +73,14 @@ void Game::execute_thread()
         int currentTime = currentTimeMillis();
         int currentSeconds = abs(gameTime - currentTime) / 1000;
 
+        vector<Client*> clients = connection_->getClients();
+
         switch (gameState) {
             case GameState::WAITING_PLAYERS:
             {
-                if(clients.size() >= 2 && currentSeconds > 30) {
-                    Output::GetInstance()->print(output_prefix, "Game starting !\n");
-                    gameState = GameState::IN_GAME;
+                if(clients.size() >= 1 && currentSeconds > 30) {
+                    Output::GetInstance()->print(output_prefix, "Initialise Game !\n");
+                    gameState = GameState::START_GAME;
                     break;
                 }
                 break;
@@ -88,45 +90,79 @@ void Game::execute_thread()
 
                 //On crée les cartes
                 for (int i = 1; i <= 104; i++) {
-                    game_cards.push_back(make_shared<Card>(Card(i)));
-                    shuffle(begin(game_cards), end(game_cards), rand());
+                    game_cards.push_back((new Card(i)));
                 }
+                //On mélange les cartes
+                default_random_engine rand(currentTime);
+                shuffle(game_cards.begin(), game_cards.end(), rand);
 
                 //On Distribue les cartes aux joueurs
                 for (Client* client : clients) {
                     string msg("CARDS:");
 
                     for (int i = 0; i <= 10; i++) {
-                        Card card = *game_cards.back().get();
+                        Card* card = game_cards.back();
                         //On enleve la dernière carte
                         game_cards.pop_back();
 
                         //On la rajoute au client
                         client->playerCards.push_back(card);
 
-                        msg += card.getValue();
+                        msg += to_string(card->getValue());
                         msg += ",";
                     }
                     //On envoi les cartes aux clients
+                    Output::GetInstance()->print(output_prefix, "Sending cards to player ID:", client->getID(), " ", msg, " !\n");
                     client->send_message(msg.c_str());
                 }
-                /*
+                
                 //On distribue 4 cartes pour les 4 piles
-                int randomIndex = rand() % game_cards.size();
-                game_cards_line_1.push_back(game_cards.at(randomIndex));
-                game_cards.erase(&game_cards[randomIndex]);
+                game_cards_line_1.push_back(game_cards.back());
+                game_cards.pop_back();
+                string line1;
+                for (Card* card : game_cards_line_1)
+                {
+                    line1 += to_string(card->getValue());
+                    line1 += ",";
+                }
 
-                randomIndex = rand() % game_cards.size();
-                game_cards_line_2.push_back(game_cards.at(randomIndex));
-                game_cards.erase(&game_cards[randomIndex]);
+                game_cards_line_2.push_back(game_cards.back());
+                game_cards.pop_back();
+                string line2;
+                for (Card* card : game_cards_line_2)
+                {
+                    line2 += to_string(card->getValue());
+                    line2 += ",";
+                }
 
-                randomIndex = rand() % game_cards.size();
-                game_cards_line_3.push_back(game_cards.at(randomIndex));
-                game_cards.erase(&game_cards[randomIndex]);
+                game_cards_line_3.push_back(game_cards.back());
+                game_cards.pop_back();
+                string line3;
+                for (Card* card : game_cards_line_3)
+                {
+                    line3 += to_string(card->getValue());
+                    line3 += ",";
+                }
 
-                randomIndex = rand() % game_cards.size();
-                game_cards_line_4.push_back(game_cards.at(randomIndex));
-                game_cards.erase(&game_cards[randomIndex]);*/
+                game_cards_line_4.push_back(game_cards.back());
+                game_cards.pop_back();
+                string line4;
+                for (Card* card : game_cards_line_4)
+                {
+                    line4 += to_string(card->getValue());
+                    line4 += ",";
+                }
+
+                string board("BOARD:" + line1 + ";" + line2 + ";" + line3 + ";" + line4);
+
+                //On envoi le board aux clients
+                for (Client* client : clients) {
+                    Output::GetInstance()->print(output_prefix, "Sending board to player ID:", client->getID(), " ", board, " !\n");
+                    client->send_message(board.c_str());
+                }
+                
+                Output::GetInstance()->print(output_prefix, "Game starting !\n");
+                gameState = GameState::IN_GAME;
             }
             case GameState::IN_GAME:
             {
@@ -149,11 +185,10 @@ void Game::execute_thread()
 
                                 for (Client* client : clients) {
 
-                                    if (client->playedCards.find(gameTurn) != 0) {
+                                    if (!client->getPlayedCard() > 0) {
                                         canContinue = false;
                                     }
                                 }
-
 
                                 if (canContinue) {
                                     turnState = TurnState::SEND_BOARD_CARDS;

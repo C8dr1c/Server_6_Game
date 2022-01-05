@@ -32,6 +32,8 @@ protected:
 	int id;
 	char* buffer;
 
+	Card* playedCard;
+
 	void execute_thread();
 
 	int recv_message();
@@ -47,11 +49,12 @@ public:
 
 	bool send_message(const char*);
 
-	map<int, Card> playedCards;
-	vector<Card> playerCards;
+	vector<Card*> playerCards;
 
-	void AddPlayedCard(int i, Card c) const;
-	Card getPlayedCard(int i) const;
+	int getID() const;
+
+	void SetPlayedCard(Card* c);
+	Card* getPlayedCard() const;
 };
 
 #endif
