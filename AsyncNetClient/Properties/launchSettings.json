@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AsyncNetClient": {
+      "commandName": "Project",
+      "commandLineArgs": "localhost 3490"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NetClient": {
+      "commandName": "Project",
+      "commandLineArgs": "localhost 3490"
+    }
+  }
+}
