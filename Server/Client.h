@@ -33,10 +33,14 @@ protected:
 	char* buffer;
 
 	Card* playedCard;
+	int playedLine;
 
 	void execute_thread();
 
 	int recv_message();
+
+	enum ClientMessageState { READY, WAITING_MESSAGE_OK };
+	ClientMessageState clientMessageState;
 
 public:
 #ifdef _WIN32
@@ -50,11 +54,17 @@ public:
 	bool send_message(const char*);
 
 	vector<Card*> playerCards;
+	int playerPoints;
 
 	int getID() const;
 
 	void SetPlayedCard(Card* c);
 	Card* getPlayedCard() const;
+
+	void SetPlayedLine(int i);
+	int getPlayedLine() const;
+
+	bool isMessageReady() const;
 };
 
 #endif

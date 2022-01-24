@@ -35,18 +35,22 @@ class Game : public ThreadedSocket
 
 	void execute_thread();
 
-	enum GameState { WAITING_PLAYERS, START_GAME, IN_GAME, END_GAME };
-	enum TurnState { WAITING_PLAYERS_CARDS, SEND_BOARD_CARDS };
-
+	enum GameState { WAITING_PLAYERS, 
+					 INIT, 
+					 NEXT_TURN,
+					 SEND_CARDS, 
+					 SEND_BOARD, 
+					 WAITING_PLAYER_CARDS,
+					 SEND_PLAY_BOARD,
+					 CHECK_LINES,
+					 TAKING_LINE, 
+					 END_GAME,
+					 END};
+	
 	GameState gameState;
-	TurnState turnState;
 
 	vector<Card*> game_cards;
-
-	vector<Card*> game_cards_line_1;
-	vector<Card*> game_cards_line_2;
-	vector<Card*> game_cards_line_3;
-	vector<Card*> game_cards_line_4;
+	vector<vector<Card*>> game_board_cards;
 
 public:
 	Game(EndPoint*, const int, bool);

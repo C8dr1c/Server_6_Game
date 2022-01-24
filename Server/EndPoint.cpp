@@ -196,8 +196,6 @@ void EndPoint::execute_thread()
         if (!is_alive)
             return;
 
-        Output::GetInstance()->print(output_prefix, "Waiting for client connection...\n");
-
         threads_count++;
 #ifdef _WIN32
         SOCKET client_socket = accept_connection();
@@ -215,7 +213,9 @@ void EndPoint::execute_thread()
             }
 
             c->start_thread();
-            clients.push_back(c);
+
+            if (!gameStart) clients.push_back(c);
+            else c->send_message("The game has already started!");
         }
     }
 }

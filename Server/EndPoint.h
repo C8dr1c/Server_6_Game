@@ -44,6 +44,7 @@ public:
 	~EndPoint();
 	void end_thread();
 	std::vector<Client*> getClients() const;
+	bool gameStart = false;
 
 };
 

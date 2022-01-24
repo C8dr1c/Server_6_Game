@@ -22,6 +22,7 @@
 #include "Client.h"
 #include "Output.h"
 #include "Card.h"
+#include <sstream>
 
 #ifdef _WIN32
 Client::Client(int id, SOCKET socket, const int MAXDATASIZE) : ThreadedSocket(socket, false, MAXDATASIZE), id(id)
@@ -33,6 +34,8 @@ Client::Client(int id, SOCKET socket, const int MAXDATASIZE) : ThreadedSocket(so
 	std::string prefix = std::string(std::string(std::string("[CLIENT_") + numstr + std::string("] ")));
 	output_prefix = (char*)malloc(strlen(prefix.c_str()) + 1);
 	strcpy(output_prefix, prefix.c_str());
+	playedLine = -1;
+	playerPoints = 0;
 }
 #else
 Client::Client(int id, int socket, const int MAXDATASIZE) : ThreadedSocket(socket, false, MAXDATASIZE), id(id)
@@ -52,6 +55,7 @@ Client::~Client()
 	ThreadedSocket::~ThreadedSocket();
 	delete[] buffer;
 	free(output_prefix);
+	playedLine = -1;
 }
 
 bool Client::send_message(const char* buffer)
@@ -64,7 +68,12 @@ bool Client::send_message(const char* buffer)
 		return false;
 	}
 
+	clientMessageState = ClientMessageState::WAITING_MESSAGE_OK;
 	return true;
+}
+bool Client::isMessageReady() const
+{
+	return clientMessageState == ClientMessageState::READY;
 }
 int Client::recv_message()
 {
@@ -111,6 +120,26 @@ Card* Client::getPlayedCard() const {
 	return playedCard;
 }
 
+void Client::SetPlayedLine(int i) {
+	playedLine = i;
+}
+
+int Client::getPlayedLine() const {
+	return playedLine;
+}
+
+vector<string> split(const string& s, char delim) {
+	vector<string> result;
+	stringstream ss(s);
+	string item;
+
+	while (getline(ss, item, delim)) {
+		result.push_back(item);
+	}
+
+	return result;
+}
+
 void Client::execute_thread()
 {
 	int length;
@@ -134,7 +163,7 @@ void Client::execute_thread()
 			return;
 
 		// Affichage du message
-		Output::GetInstance()->print(output_prefix, "Message received : ", buffer, "\n");
+		//Output::GetInstance()->print(output_prefix, "Message received : ", buffer, "\n");
 
 		if (strcmp(buffer, "DISCONNECT") == 0) {
 			break;
@@ -145,25 +174,49 @@ void Client::execute_thread()
 			time_info = localtime(&time_value);
 
 			// Traitement du message reçu
-			if (strcmp(buffer, "PLAY") == 0)
-				strftime(buffer, MAXDATASIZE, "%e/%m/%Y", time_info);
-			else if (strcmp(buffer, "DAY") == 0)
-				strftime(buffer, MAXDATASIZE, "%A", time_info);
-			else if (strcmp(buffer, "MONTH") == 0)
-				strftime(buffer, MAXDATASIZE, "%B", time_info);
-			else
-				sprintf(buffer, "%s is not recognized as a valid command", buffer);
+			if (strcmp(buffer, "OK") == 0) {
+				clientMessageState = ClientMessageState::READY;
+			}
+
+			string msg(buffer);
+
+			vector<string> splitedMsg = split(msg, ':');
+			string command(splitedMsg.at(0));
+				
+			if (strcmp(command.c_str(), "PLAY") == 0) {
+				Card* c;
+				for (Card* card : playerCards) {
+					if (card->getValue() == stoi(splitedMsg.at(1))) {
+						c = card;
+					}
+				}
+
+				if (find(playerCards.begin(), playerCards.end(), c) != playerCards.end()) {
+					playedCard = c;
+				}
+				else {
+					sprintf(buffer, "This player does not have this card %s", buffer);
+				}	
+			}
+				
+			else if (strcmp(command.c_str(), "LINE") == 0) {
+				int pLine = stoi(splitedMsg.at(1));
+
+				if (pLine <= 3 && pLine >= 0) {
+					playedLine = pLine;
+				}
+				else {
+					sprintf(buffer, "The line must be between 0 and 3", buffer);
+				}
+			}
+
+			//Not valid command
+			else {
+				sprintf(buffer, "NO");
+			}
 
 			if (socket == NULL || !is_alive)
 				return;
-
-			// On envoie le buffer
-			Output::GetInstance()->print(output_prefix, "Sending message \"", buffer, "\" to client...\n");
-			if (!send_message(buffer)) {
-				break;
-			}
-
-			Output::GetInstance()->print(output_prefix, "Message \"", buffer, "\" send to client successfully.\n");
 		}
 	}
 
