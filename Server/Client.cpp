@@ -211,7 +211,7 @@ void Client::execute_thread()
 				}
 			}
 			//Join
-			else if (strcmp(command.c_str(), "JOIN")) {
+			else if (strcmp(command.c_str(), "JOIN") == 0) {
 				playerName = splitedMsg.at(1);
 			}
 			//Not valid command
