@@ -34,6 +34,7 @@ Client::Client(int id, SOCKET socket, const int MAXDATASIZE) : ThreadedSocket(so
 	std::string prefix = std::string(std::string(std::string("[CLIENT_") + numstr + std::string("] ")));
 	output_prefix = (char*)malloc(strlen(prefix.c_str()) + 1);
 	strcpy(output_prefix, prefix.c_str());
+	playerName = "Joueur";
 	playedLine = -1;
 	playerPoints = 0;
 }
@@ -197,8 +198,7 @@ void Client::execute_thread()
 					//sprintf(buffer, "This player does not have this card %s", buffer);
 					send_message("NO:This player does not have this card %s");
 				}	
-			}
-				
+			}	
 			else if (strcmp(command.c_str(), "LINE") == 0) {
 				int pLine = stoi(splitedMsg.at(1));
 
@@ -210,7 +210,10 @@ void Client::execute_thread()
 					send_message("NO:The line must be between 0 and 3");
 				}
 			}
-
+			//Join
+			else if (strcmp(command.c_str(), "JOIN")) {
+				playerName = splitedMsg.at(1);
+			}
 			//Not valid command
 			else {
 				//sprintf(buffer, "NO");

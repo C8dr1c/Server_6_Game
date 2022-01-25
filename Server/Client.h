@@ -55,6 +55,7 @@ public:
 
 	vector<Card*> playerCards;
 	int playerPoints;
+	string playerName;
 
 	int getID() const;
 

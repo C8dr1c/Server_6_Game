@@ -413,6 +413,31 @@ void Game::execute_thread()
             }
             case GameState::END:
             {
+                if (clientsMessageSend.size() == clients.size()) {
+                    clientsMessageSend.clear();
+                    break;
+                }
+
+                for (Client* client : clients) {
+
+                    if (find(clientsMessageSend.begin(), clientsMessageSend.end(), client) != clientsMessageSend.end()) {
+                        continue;
+                    }
+
+                    string end("END:");
+                    if (client->isMessageReady()) {
+                        //On envoi le board aux clients
+                        for (Client* client : clients) {
+                            end += client->getID();
+                            end += ",";
+                            end += client->playerPoints;
+                        }
+                        end += ";";
+                    }
+
+                    client->send_message(end.c_str());
+                    clientsMessageSend.push_back(client);
+                }
                 break;
             }
         }
