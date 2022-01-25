@@ -195,7 +195,8 @@ void Client::execute_thread()
 					playedCard = c;
 				}
 				else {
-					sprintf(buffer, "This player does not have this card %s", buffer);
+					//sprintf(buffer, "This player does not have this card %s", buffer);
+					send_message("NO:This player does not have this card %s");
 				}	
 			}
 				
@@ -206,13 +207,15 @@ void Client::execute_thread()
 					playedLine = pLine;
 				}
 				else {
-					sprintf(buffer, "The line must be between 0 and 3", buffer);
+					//sprintf(buffer, "The line must be between 0 and 3", buffer);
+					send_message("NO:The line must be between 0 and 3");
 				}
 			}
 
 			//Not valid command
 			else {
-				sprintf(buffer, "NO");
+				//sprintf(buffer, "NO");
+				send_message("NO:Unknown command!");
 			}
 
 			if (socket == NULL || !is_alive)
