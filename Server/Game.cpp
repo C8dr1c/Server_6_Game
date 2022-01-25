@@ -336,16 +336,17 @@ void Game::execute_thread()
                         break;
                     }
 
-                    //On calcule les points de la ligne
-                    for (Card* card : game_board_cards.at(playedClients.back()->getPlayedLine()))
-                    {
-                        playedClients.back()->playerPoints += (int) card->getPoints();
-                    }
-                    game_board_cards.at(playedClients.back()->getPlayedLine()).clear();
-                    game_board_cards.at(playedClients.back()->getPlayedLine()).push_back(playedClients.back()->getPlayedCard());
-
                     if (playedClients.back()->isMessageReady()) {
                         //On envoi les points au client
+
+                        //On calcule les points de la ligne
+                        for (Card* card : game_board_cards.at(playedClients.back()->getPlayedLine()))
+                        {
+                            playedClients.back()->playerPoints += (int)card->getPoints();
+                        }
+                        game_board_cards.at(playedClients.back()->getPlayedLine()).clear();
+                        game_board_cards.at(playedClients.back()->getPlayedLine()).push_back(playedClients.back()->getPlayedCard());
+
                         Output::GetInstance()->print(output_prefix, "Sending score to player ID:", playedClients.back()->getID(), playedClients.back()->getID(), " (", playedClients.back()->playerName, ") " , " SCORE = ", playedClients.back()->playerPoints, " !\n");
                         string msg("SCORE:" + to_string(playedClients.back()->playerPoints));
                         playedClients.back()->send_message(msg.c_str());
