@@ -63,7 +63,7 @@ void Game::execute_thread()
     int gameTurn = 10;
 
     bool gameStarting = false;
-    int gameStartingSeconds = 2;
+    int gameStartingSeconds = 20;
 
     vector<Client*> clientsMessageSend;
     vector<Client*> playedClients;
