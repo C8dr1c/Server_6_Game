@@ -339,7 +339,7 @@ void Game::execute_thread()
                     //On calcule les points de la ligne
                     for (Card* card : game_board_cards.at(playedClients.back()->getPlayedLine()))
                     {
-                        playedClients.back()->playerPoints += card->getPoints();
+                        playedClients.back()->playerPoints += (int) card->getPoints();
                     }
                     game_board_cards.at(playedClients.back()->getPlayedLine()).clear();
                     game_board_cards.at(playedClients.back()->getPlayedLine()).push_back(playedClients.back()->getPlayedCard());
