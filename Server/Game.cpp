@@ -291,7 +291,7 @@ void Game::execute_thread()
                 //On recherche la meilleur ligne
                 for (int i = 0; i < 4; i++) {
                     if (currentLowestPlayedCard->getValue() < game_board_cards.at(i).back()->getValue()) continue;
-                    if (!(currentLowestPlayedCard->getValue() < game_board_cards.at(bestLine).back()->getValue())) {
+                    if (currentLowestPlayedCard->getValue() < game_board_cards.at(bestLine).back()->getValue()) {
                         bestLine = i;
                         continue;
                     }
@@ -347,7 +347,7 @@ void Game::execute_thread()
                     if (playedClients.back()->isMessageReady()) {
                         //On envoi les points au client
                         Output::GetInstance()->print(output_prefix, "Sending score to player ID:", playedClients.back()->getID(), " SCORE = ", playedClients.back()->playerPoints, " !\n");
-                        string msg("SCORE:" + playedClients.back()->playerPoints);
+                        string msg("SCORE:" + to_string(playedClients.back()->playerPoints));
                         playedClients.back()->send_message(msg.c_str());
                         clientsMessageSend.push_back(playedClients.back());
                     }
