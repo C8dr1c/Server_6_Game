@@ -414,7 +414,6 @@ void Game::execute_thread()
             case GameState::END:
             {
                 if (clientsMessageSend.size() == clients.size()) {
-                    clientsMessageSend.clear();
                     break;
                 }
 
