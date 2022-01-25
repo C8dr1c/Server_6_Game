@@ -253,7 +253,7 @@ void Game::execute_thread()
                         client->SetPlayedCard(NULL);
                     }
                     playedClients.clear();
-                    gameState = GameState::SEND_CARDS;
+                    gameState = GameState::NEXT_TURN;
                     break;
                 }
 
