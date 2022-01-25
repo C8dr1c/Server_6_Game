@@ -148,7 +148,7 @@ void Game::execute_thread()
             }
             case GameState::NEXT_TURN:
             {
-                if (gameTurn < 0) {
+                if (gameTurn <= 0) {
                     gameState = END_GAME;
                     break;
                 }
