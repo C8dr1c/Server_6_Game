@@ -173,17 +173,16 @@ void Client::execute_thread()
 			time(&time_value);
 			time_info = localtime(&time_value);
 
-			// Traitement du message reçu
-			if (strcmp(buffer, "OK") == 0) {
-				clientMessageState = ClientMessageState::READY;
-			}
-
 			string msg(buffer);
 
 			vector<string> splitedMsg = split(msg, ':');
 			string command(splitedMsg.at(0));
-				
-			if (strcmp(command.c_str(), "PLAY") == 0) {
+			
+			// Traitement du message reçu
+			if (strcmp(buffer, "OK") == 0) {
+				clientMessageState = ClientMessageState::READY;
+			}
+			else if (strcmp(command.c_str(), "PLAY") == 0) {
 				Card* c;
 				for (Card* card : playerCards) {
 					if (card->getValue() == stoi(splitedMsg.at(1))) {
