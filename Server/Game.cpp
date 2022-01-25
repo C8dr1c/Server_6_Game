@@ -430,8 +430,8 @@ void Game::execute_thread()
                             end += client->playerName;
                             end += ",";
                             end += client->playerPoints;
+                            end += ";";
                         }
-                        end += ";";
                     }
 
                     client->send_message(end.c_str());
