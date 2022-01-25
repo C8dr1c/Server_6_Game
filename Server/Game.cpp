@@ -62,7 +62,10 @@ void Game::execute_thread()
 
 	int gameTurn = 10;
 
+	int startTime = currentTimeMillis();
+
 	int gameTime = 0;
+
 	bool gameStarting = false;
 	int gameStartingSeconds = 20;
 
@@ -78,6 +81,7 @@ void Game::execute_thread()
 			return;
 
 		int currentTime = currentTimeMillis();
+		int currentRealTime = abs(startTime - currentTime);
 
 		//On récup les clients
 		vector<Client*> clients = connection_->getClients();
@@ -96,7 +100,7 @@ void Game::execute_thread()
 			}
 
 			if (gameStarting) {
-				if (gameTime % 1000 == 0) {
+				if (gameTime % 1000 == 0 && gameTime != currentRealTime) {
 					if (gameStartingSeconds <= 5) {
 						Output::GetInstance()->print(output_prefix, "Game start in ", gameStartingSeconds, " seconds !\n");
 					}
@@ -358,7 +362,7 @@ void Game::execute_thread()
 		}
 		case GameState::SEND_PLAY_BOARD:
 		{
-			if (gameTime % 200 == 0) {
+			if (gameTime % 100 == 0 && gameTime != currentRealTime) {
 				//Si le board à était envoyé à tout le monde
 				if (clientsMessageSend.size() == clients.size()) {
 					clientsMessageSend.clear();
@@ -425,8 +429,8 @@ void Game::execute_thread()
 					continue;
 				}
 
-				string end("END:");
 				if (client->isMessageReady()) {
+					string end("END:");
 					//On envoi le board aux clients
 					for (Client* client : clients) {
 						end += client->playerName;
@@ -434,17 +438,16 @@ void Game::execute_thread()
 						end += to_string(client->playerPoints);
 						end += ";";
 					}
-				}
 
-				client->send_message(end.c_str());
-				clientsMessageSend.push_back(client);
+					client->send_message(end.c_str());
+					clientsMessageSend.push_back(client);
+				}
 			}
 			break;
 		}
 		}
 
-
-		if (gameTime != currentTime) {
+		if (gameTime != currentRealTime) {
 			gameTime++;
 		}
 	}
