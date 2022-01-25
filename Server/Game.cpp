@@ -87,7 +87,7 @@ void Game::execute_thread()
                 if (currentTime % 1000 == 0) {
                     if (gameStarting) {
                         //Démarrage dans X Secondes!
-                        if (gameStartingSeconds <= 0) {
+                        if (gameStartingSeconds <= 0 || clients.size() == 10) {
                             Output::GetInstance()->print(output_prefix, "Initialise Game !\n");
                             gameState = GameState::INIT;
 
