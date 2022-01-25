@@ -182,7 +182,7 @@ void Game::execute_thread()
 
                     if (client->isMessageReady()) {
                         //On envoi les cartes au joueur
-                        Output::GetInstance()->print(output_prefix, "Sending cards to player ID:", client->getID(), " ", msg, " !\n");
+                        Output::GetInstance()->print(output_prefix, "Sending cards to player ID:", client->getID(), " (", client->playerName, ") ", " ", msg, " !\n");
                         client->send_message(msg.c_str());
                         clientsMessageSend.push_back(client);
                     }
@@ -220,7 +220,7 @@ void Game::execute_thread()
 
                     if (client->isMessageReady()) {
                         //On envoi le board aux clients
-                        Output::GetInstance()->print(output_prefix, "Sending board to player ID:", client->getID(), " ", board, " !\n");
+                        Output::GetInstance()->print(output_prefix, "Sending board to player ID:", client->getID(), " (", client->playerName, ") ", " ", board, " !\n");
                         client->send_message(board.c_str());
                         clientsMessageSend.push_back(client);
                     }
@@ -269,7 +269,7 @@ void Game::execute_thread()
 
                     Card* playedCard = client->getPlayedCard();
 
-                    Output::GetInstance()->print("Player ID: ", client->getID(), " played card ",
+                    Output::GetInstance()->print("Player ID: ", client->getID(), " (", client->playerName, ") ", " played card ",
                         playedCard->getValue(),
                         " - (", playedCard->getPoints(), " pts)", "!\n");
 
@@ -346,7 +346,7 @@ void Game::execute_thread()
 
                     if (playedClients.back()->isMessageReady()) {
                         //On envoi les points au client
-                        Output::GetInstance()->print(output_prefix, "Sending score to player ID:", playedClients.back()->getID(), " SCORE = ", playedClients.back()->playerPoints, " !\n");
+                        Output::GetInstance()->print(output_prefix, "Sending score to player ID:", playedClients.back()->getID(), playedClients.back()->getID(), " (", playedClients.back()->playerName, ") " , " SCORE = ", playedClients.back()->playerPoints, " !\n");
                         string msg("SCORE:" + to_string(playedClients.back()->playerPoints));
                         playedClients.back()->send_message(msg.c_str());
                         clientsMessageSend.push_back(playedClients.back());
@@ -386,7 +386,7 @@ void Game::execute_thread()
 
                         if (client->isMessageReady()) {
                             //On envoi le board aux clients
-                            Output::GetInstance()->print(output_prefix, "Sending board to player ID:", client->getID(), " ", board, " !\n");
+                            Output::GetInstance()->print(output_prefix, "Sending board to player ID:", client->getID(), " (", client->playerName, ") ", board, " !\n");
                             client->send_message(board.c_str());
                             clientsMessageSend.push_back(client);
                         }
@@ -404,7 +404,7 @@ void Game::execute_thread()
                 Output::GetInstance()->print("*********************************************************\n");
 
                 for (Client* client : clients) {
-                    Output::GetInstance()->print("*               ", client->getID(), ". ", client->playerPoints, " Pts!", "\n");
+                    Output::GetInstance()->print("*               ", client->playerName, ". ", client->playerPoints, " Pts!", "\n");
                 }
 
                 Output::GetInstance()->print("*********************************************************\n");
@@ -427,7 +427,7 @@ void Game::execute_thread()
                     if (client->isMessageReady()) {
                         //On envoi le board aux clients
                         for (Client* client : clients) {
-                            end += client->getID();
+                            end += client->playerName;
                             end += ",";
                             end += client->playerPoints;
                         }
