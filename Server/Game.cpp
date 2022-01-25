@@ -154,7 +154,7 @@ void Game::execute_thread()
 		case GameState::NEXT_TURN:
 		{
 			if (gameTurn <= 0) {
-				gameState = END_GAME;
+				gameState = SEND_END_CARDS;
 				break;
 			}
 			Output::GetInstance()->print(output_prefix, "Round ", gameTurn, " !\n");
@@ -396,6 +396,39 @@ void Game::execute_thread()
 						client->send_message(board.c_str());
 						clientsMessageSend.push_back(client);
 					}
+				}
+			}
+			break;
+		}
+
+		case GameState::SEND_END_CARDS:
+		{
+			//Si les cartes ont étaient envoyé à tout le monde
+			if (clientsMessageSend.size() == clients.size()) {
+				clientsMessageSend.clear();
+				//Output::GetInstance()->print(output_prefix, "Dealt cards !\n");
+				gameState = GameState::SEND_BOARD;
+				break;
+			}
+
+			for (Client* client : clients) {
+
+				if (find(clientsMessageSend.begin(), clientsMessageSend.end(), client) != clientsMessageSend.end()) {
+					continue;
+				}
+
+				string msg("CARDS:");
+
+				for (Card* card : client->playerCards) {
+					msg += to_string(card->getValue());
+					msg += ",";
+				}
+
+				if (client->isMessageReady()) {
+					//On envoi les cartes au joueur
+					Output::GetInstance()->print(output_prefix, "Sending cards to player ID:", client->getID(), " (", client->playerName, ") ", " ", msg, " !\n");
+					client->send_message(msg.c_str());
+					clientsMessageSend.push_back(client);
 				}
 			}
 			break;

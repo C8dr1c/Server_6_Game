@@ -44,6 +44,7 @@ class Game : public ThreadedSocket
 					 SEND_PLAY_BOARD,
 					 CHECK_LINES,
 					 TAKING_LINE, 
+					 SEND_END_CARDS,
 					 END_GAME,
 					 END};
 	
