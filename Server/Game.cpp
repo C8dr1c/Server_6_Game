@@ -88,7 +88,7 @@ void Game::execute_thread()
 
 		//Si le client se déconnecte on le retire de la partie
 		for (Client* client : clients) {
-			if (client->clientMessageState == Client::ClientMessageState::DISCONNECT) {
+			if (client->isDisconnect) {
 				clients.erase(
 					remove(clients.begin(),
 						   clients.end(),

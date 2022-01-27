@@ -37,6 +37,7 @@ Client::Client(int id, SOCKET socket, const int MAXDATASIZE) : ThreadedSocket(so
 	playerName = "Joueur";
 	playedLine = -1;
 	playerPoints = 0;
+	isDisconnect = false;
 }
 #else
 Client::Client(int id, int socket, const int MAXDATASIZE) : ThreadedSocket(socket, false, MAXDATASIZE), id(id)
@@ -104,7 +105,7 @@ void Client::end_thread()
 
 	// Sending close connection to client
 	send_message("CONNECTION_CLOSED");
-	clientMessageState = ClientMessageState::DISCONNECT;
+	isDisconnect = true;
 	ThreadedSocket::end_thread();
 }
 
