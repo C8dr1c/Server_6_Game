@@ -407,7 +407,7 @@ void Game::execute_thread()
 			if (clientsMessageSend.size() == clients.size()) {
 				clientsMessageSend.clear();
 				//Output::GetInstance()->print(output_prefix, "Dealt cards !\n");
-				gameState = GameState::SEND_BOARD;
+				gameState = GameState::END_GAME;
 				break;
 			}
 
