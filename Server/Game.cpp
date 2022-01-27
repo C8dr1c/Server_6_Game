@@ -86,6 +86,17 @@ void Game::execute_thread()
 		//On récup les clients
 		vector<Client*> clients = connection_->getClients();
 
+		//Si le client se déconnecte on le retire de la partie
+		for (Client* client : clients) {
+			if (client->clientMessageState == Client::ClientMessageState::DISCONNECT) {
+				clients.erase(
+					remove(clients.begin(),
+						   clients.end(),
+						   client),
+					       clients.end());
+			}
+		}
+
 		switch (gameState) {
 		case GameState::WAITING_PLAYERS:
 		{

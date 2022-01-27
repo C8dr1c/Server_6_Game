@@ -39,9 +39,6 @@ protected:
 
 	int recv_message();
 
-	enum ClientMessageState { READY, WAITING_MESSAGE_OK };
-	ClientMessageState clientMessageState;
-
 public:
 #ifdef _WIN32
 	Client(int, SOCKET, const int MAXDATASIZE);
@@ -52,6 +49,9 @@ public:
 	void end_thread();
 
 	bool send_message(const char*);
+
+	enum ClientMessageState { READY, WAITING_MESSAGE_OK, DISCONNECT };
+	ClientMessageState clientMessageState;
 
 	vector<Card*> playerCards;
 	int playerPoints;

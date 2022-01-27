@@ -104,7 +104,7 @@ void Client::end_thread()
 
 	// Sending close connection to client
 	send_message("CONNECTION_CLOSED");
-
+	clientMessageState = ClientMessageState::DISCONNECT;
 	ThreadedSocket::end_thread();
 }
 
